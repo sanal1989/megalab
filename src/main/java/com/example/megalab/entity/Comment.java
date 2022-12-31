@@ -36,7 +36,7 @@ public class Comment {
 
     //@ManyToOne
 //    @JoinColumn(name = "comments_id")
-    private Comment commentForComment;
+//    private Comment commentForComment;
 
     public Comment() {
     }

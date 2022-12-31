@@ -4,6 +4,7 @@ import com.example.megalab.entity.User;
 import com.example.megalab.repository.UserRepository;
 import com.example.megalab.security.AuthenticationRequestDTO;
 import com.example.megalab.security.JwtTokenProvider;
+import com.example.megalab.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
@@ -20,15 +21,17 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
-public class AuthentificationRestController {
+public class AuthenticationRestController {
 
     private final AuthenticationManager authenticationManager;
-    private UserRepository userRepository;
+    private UserService userService;
     private JwtTokenProvider jwtTokenProvider;
 
-    public AuthentificationRestController(AuthenticationManager authenticationManager, UserRepository userRepository, JwtTokenProvider jwtTokenProvider) {
+    public AuthenticationRestController(AuthenticationManager authenticationManager,
+                                        UserService userService,
+                                        JwtTokenProvider jwtTokenProvider) {
         this.authenticationManager = authenticationManager;
-        this.userRepository = userRepository;
+        this.userService = userService;
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
@@ -36,7 +39,7 @@ public class AuthentificationRestController {
     public ResponseEntity<?> authenticate(@RequestBody AuthenticationRequestDTO requestDTO){
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(requestDTO.getLogin(), requestDTO.getPassword()));
-            User user = userRepository.findByLogin(requestDTO.getLogin())
+            User user = userService.findByLogin(requestDTO.getLogin())
                     .orElseThrow(()-> new UsernameNotFoundException("User doesn't exist"));
             String token = jwtTokenProvider.createToken(requestDTO.getLogin(), user.getRole().name());
             Map<Object, Object> response = new HashMap<>();

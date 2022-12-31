@@ -21,13 +21,10 @@ import org.springframework.security.web.SecurityFilterChain;
 public class WebSecurityConfig{
 
 //    private final UserDetailsService userDetailsServiceImp;
-    private final UserRepository userRepository;
     private final JwtConfigure jwtConfigure;
     @Autowired
-    public WebSecurityConfig(JwtConfigure jwtConfigure,
-                             UserRepository userRepository){
+    public WebSecurityConfig(JwtConfigure jwtConfigure){
         this.jwtConfigure = jwtConfigure;
-        this.userRepository = userRepository;
     }
 
     @Bean

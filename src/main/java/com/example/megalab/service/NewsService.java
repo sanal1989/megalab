@@ -5,6 +5,7 @@ import com.example.megalab.entity.Rubric;
 import com.example.megalab.entity.User;
 import com.example.megalab.repository.NewsRepository;
 import com.example.megalab.repository.UserRepository;
+import com.example.megalab.security.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,12 +20,15 @@ public class NewsService {
 
     private final NewsRepository newsRepository;
     private final UserRepository userRepository;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Autowired
     public NewsService(NewsRepository newsRepository,
-                       UserRepository userRepository) {
+                       UserRepository userRepository,
+                       JwtTokenProvider jwtTokenProvider) {
         this.newsRepository = newsRepository;
         this.userRepository = userRepository;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
 
@@ -32,13 +36,14 @@ public class NewsService {
         return newsRepository.findAll();
     }
 
-    public ResponseEntity<?> saveNews(Long id,
+    public ResponseEntity<?> saveNews(String token,
                                       String header,
                                       String description,
                                       String content,
                                       String rubric,
                                       MultipartFile file) {
-        User user = userRepository.findById(id).get();
+        String login = jwtTokenProvider.getUserName(token);
+        User user = userRepository.findByLogin(login).get();
         News news = new News();
         try {
             news.setHeader(header);
@@ -54,8 +59,9 @@ public class NewsService {
         return new ResponseEntity<>("news download success", HttpStatus.OK);
     }
 
-    public List<News> getUserNews(long id) {
-        User user = userRepository.findById(id).get();
+    public List<News> getUserNews(String token) {
+        String login = jwtTokenProvider.getUserName(token);
+        User user = userRepository.findByLogin(login).get();
         return newsRepository.findByUser(user);
     }
 }

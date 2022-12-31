@@ -16,15 +16,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class MegalabApplication {
 
     private UserService userService;
-    private PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
 
     @Autowired
     public MegalabApplication(UserService userService,
-                              PasswordEncoder passwordEncoder,
                               AuthenticationManager authenticationManager) {
         this.userService = userService;
-        this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
     }
 

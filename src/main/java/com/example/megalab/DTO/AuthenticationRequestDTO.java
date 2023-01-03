@@ -1,4 +1,4 @@
-package com.example.megalab.security;
+package com.example.megalab.DTO;
 
 public class AuthenticationRequestDTO {
 

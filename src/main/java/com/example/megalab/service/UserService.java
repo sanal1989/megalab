@@ -1,5 +1,6 @@
 package com.example.megalab.service;
 
+import com.example.megalab.DTO.UserDTO;
 import com.example.megalab.entity.News;
 import com.example.megalab.entity.Role;
 import com.example.megalab.entity.User;
@@ -58,7 +59,12 @@ public class UserService {
             user.setRole(Role.USER);
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             userRepository.save(user);
-            response.put("User", user);
+            UserDTO userDTO = new UserDTO();
+            userDTO.setFirstName(user.getFirstName());
+            userDTO.setLastName(user.getLastName());
+            userDTO.setLogin(user.getLogin());
+            userDTO.setImage(null);
+            response.put("User", userDTO);
         }else{
             return new ResponseEntity<>("User already exist", HttpStatus.BAD_REQUEST);
         }
@@ -113,7 +119,11 @@ public class UserService {
         if(user.getLogin() != null )userFromDataBase.setLogin(user.getLogin());
         userFromDataBase.setRole(Role.USER);
         userRepository.save(userFromDataBase);
-        return ResponseEntity.ok(userFromDataBase);
+        UserDTO userDTO = new UserDTO();
+        userDTO.setFirstName(userFromDataBase.getFirstName());
+        userDTO.setLastName(userFromDataBase.getLastName());
+        userDTO.setLogin(userFromDataBase.getLogin());
+        return ResponseEntity.ok(userDTO);
     }
 
     public ResponseEntity<?> addLike(String token, long newsId) {
@@ -130,28 +140,6 @@ public class UserService {
         String login = jwtTokenProvider.getUserName(token);
         User user = userRepository.findByLogin(login).get();
         return user.getNews();
-    }
-
-    public ResponseEntity<?> testUser(String token, User user) {
-
-//        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//        if (principal instanceof UserDetails) {
-//            String username = ((UserDetails)principal).getUsername();
-//            System.out.println("if"+username);
-//        } else {
-//            String username = principal.toString();
-//            System.out.println("else" + username);
-//        }
-
-//        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(requestDTO.getLogin(), requestDTO.getPassword()));
-//        User user = userRepository.findByLogin(requestDTO.getLogin())
-//                .orElseThrow(()-> new UsernameNotFoundException("User doesn't exist"));
-//        String token = jwtTokenProvider.createToken(requestDTO.getLogin(), user.getRole().name());
-//        Map<Object, Object> response = new HashMap<>();
-//        response.put("login", requestDTO.getLogin());
-//        response.put("token", token);
-        return null;
-
     }
 
     public Optional<User> findByLogin(String login) {

@@ -14,6 +14,10 @@ public class CommentController {
 
     private CommentService commentService;
 
+    public CommentController(CommentService commentService) {
+        this.commentService = commentService;
+    }
+
     @PostMapping("/addComment/{newsId}")
     public ResponseEntity<?> addComment(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
                                         @PathVariable long newsId,
@@ -21,7 +25,7 @@ public class CommentController {
         return commentService.addComment(token, newsId, comment);
     }
 
-    @PostMapping("/addCommentToComment/{userId}/{commentId}")
+    @PostMapping("/addCommentToComment/{commentId}")
     public ResponseEntity<?> addCommentToComment(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
                                                  @PathVariable long commentId,
                                                  @RequestBody Comment comment){

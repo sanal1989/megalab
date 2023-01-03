@@ -3,9 +3,15 @@ package com.example.megalab.service;
 import com.example.megalab.entity.News;
 import com.example.megalab.entity.Rubric;
 import com.example.megalab.entity.User;
+import com.example.megalab.repository.CommentRepository;
 import com.example.megalab.repository.NewsRepository;
 import com.example.megalab.repository.UserRepository;
 import com.example.megalab.security.JwtTokenProvider;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -21,14 +28,20 @@ public class NewsService {
     private final NewsRepository newsRepository;
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
+    private final EntityManager enitityManager;
+    private final CommentRepository commentRepository;
 
     @Autowired
     public NewsService(NewsRepository newsRepository,
                        UserRepository userRepository,
-                       JwtTokenProvider jwtTokenProvider) {
+                       JwtTokenProvider jwtTokenProvider,
+                       EntityManager enitityManager,
+                       CommentRepository commentRepository) {
         this.newsRepository = newsRepository;
         this.userRepository = userRepository;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.enitityManager = enitityManager;
+        this.commentRepository = commentRepository;
     }
 
 
@@ -63,5 +76,56 @@ public class NewsService {
         String login = jwtTokenProvider.getUserName(token);
         User user = userRepository.findByLogin(login).get();
         return newsRepository.findByUser(user);
+    }
+
+    public ResponseEntity<?> filterNews(String sport,
+                                        String politics,
+                                        String stars,
+                                        String art,
+                                        String fashion) {
+        CriteriaBuilder cb = enitityManager.getCriteriaBuilder();
+        CriteriaQuery<News> query = cb.createQuery(News.class);
+        Root<News> root = query.from(News.class);
+        List<Predicate> predicates = new ArrayList<>();
+
+        if(!sport.equals("")) {
+            predicates.add(cb.equal(root.get("rubric"), Rubric.getRubric(sport)));
+        }
+        if(!politics.equals("")) {
+            predicates.add(cb.equal(root.get("rubric"), Rubric.getRubric(politics)));
+        }
+        if(!stars.equals("")) {
+            predicates.add(cb.equal(root.get("rubric"), Rubric.getRubric(stars)));
+        }
+        if(!art.equals("")) {
+            predicates.add(cb.equal(root.get("rubric"), Rubric.getRubric(art)));
+        }
+        if(!fashion.equals("")) {
+            predicates.add(cb.equal(root.get("rubric"), Rubric.getRubric(fashion)));
+        }
+
+        query.select(root).where(cb.or(predicates.toArray(new Predicate[0])));
+        List<News> news = enitityManager.createQuery(query).getResultList();
+        return new ResponseEntity<>(news, HttpStatus.OK);
+    }
+
+    public News getNews(long newsId) {
+        return newsRepository.findById(newsId).get();
+    }
+
+    public ResponseEntity<?> deleteNews(String token, long newsId) {
+        String login = jwtTokenProvider.getUserName(token);
+        User user = userRepository.findByLogin(login).get();
+        News news = newsRepository.findById(newsId).get();
+        if(user.getId() == news.getUser().getId()){
+            commentRepository.deleteByNews(news);
+            newsRepository.deleteById(newsId);
+            return new ResponseEntity<>("News delete success", HttpStatus.OK);
+        }
+        return new ResponseEntity<>("News doesn't delete", HttpStatus.BAD_REQUEST);
+    }
+
+    public List<News> findNews(String header) {
+        return newsRepository.findByHeaderContains(header);
     }
 }

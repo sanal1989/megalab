@@ -1,5 +1,6 @@
 package com.example.megalab.controller;
 
+import com.example.megalab.DTO.UserDTO;
 import com.example.megalab.entity.User;
 import com.example.megalab.security.JwtTokenProvider;
 import com.example.megalab.service.CommentService;
@@ -21,7 +22,12 @@ public class RegistrationController {
     }
 
     @PostMapping("/registration")
-    public ResponseEntity<?> getLoginPage(@RequestBody User user){
+    public ResponseEntity<?> getLoginPage(@RequestBody UserDTO userDTO){
+        User user = new User();
+        user.setFirstName(userDTO.getFirstName());
+        user.setLastName(userDTO.getLastName());
+        user.setLogin(userDTO.getLogin());
+        user.setPassword(userDTO.getPassword());
         ResponseEntity<?> entity = userService.saveUser(user);
         return entity;
     }

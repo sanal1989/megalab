@@ -3,7 +3,11 @@ package com.example.megalab.entity;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum Rubric {
-    SPORT("Спорт");
+    SPORT("Спорт"),
+    POLITICS("Политика"),
+    STARS("Звезды"),
+    ART("Искусство"),
+    FASHION("Мода");
 
     private String value;
 

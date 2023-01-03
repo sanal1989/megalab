@@ -6,9 +6,12 @@ import jakarta.persistence.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "comment")
+//@NamedEntityGraph(name = "Comment.comment",
+//attributeNodes = @NamedAttributeNode("commentForComment"))
 public class Comment {
 
     @Id
@@ -26,7 +29,7 @@ public class Comment {
     @JoinColumn(name="user_id")
     private User user;
 
-    @ManyToOne()
+    @ManyToOne
     @JoinColumn(name="news_id")
     @JsonIgnore
     private News news;
@@ -34,9 +37,9 @@ public class Comment {
     @Column(name = "comment")
     private String comment;
 
-    //@ManyToOne
-//    @JoinColumn(name = "comments_id")
-//    private Comment commentForComment;
+    @OneToMany
+    @JoinColumn(name = "comments_id")
+    private List<Comment> commentForComment;
 
     public Comment() {
     }
@@ -73,13 +76,13 @@ public class Comment {
         this.comment = comment;
     }
 
-//    public Comment getCommentForComment() {
-//        return commentForComment;
-//    }
-//
-//    public void setCommentForComment(Comment commentForComment) {
-//        this.commentForComment = commentForComment;
-//    }
+    public List<Comment> getCommentForComment() {
+        return commentForComment;
+    }
+
+    public void setCommentForComment(List<Comment> commentForComment) {
+        this.commentForComment = commentForComment;
+    }
 
     @Override
     public String toString() {

@@ -48,7 +48,8 @@ public class CommentService {
         User user1 = userRepository.findByLogin(login).get();
         Comment comment1 = commentRepository.findById(comment_id).get();
         comment.setUser(user1);
-//        comment1.setCommentForComment(comment1);
+        List<Comment> list = comment1.getCommentForComment();
+        list.add(comment);
         commentRepository.save(comment);
         return new ResponseEntity<>("comment save", HttpStatus.OK);
     }

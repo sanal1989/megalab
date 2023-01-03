@@ -46,9 +46,21 @@ public class NewsController {
                 file);
     }
 
+    @GetMapping("/getNews/{newsId}")
+    public News getNews(@PathVariable long newsId){
+        return newsService.getNews(newsId);
+    }
+
     @GetMapping("/getUserNews")
     public List<News> getUserNews(@RequestHeader(HttpHeaders.AUTHORIZATION) String token){
         return newsService.getUserNews(token);
+    }
+
+    @DeleteMapping("deleteNews/{newsId}")
+    @Transactional
+    public ResponseEntity<?> deleteNews(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+                                        @PathVariable long newsId){
+        return newsService.deleteNews(token, newsId);
     }
 
     @GetMapping("/like/{newsId}")
@@ -56,6 +68,12 @@ public class NewsController {
                                      @PathVariable long newsId){
         return userService.addLike(token, newsId);
     }
+
+    @GetMapping("/findNews/{header}")
+    public List<News> findNews(@PathVariable String header){
+        return newsService.findNews(header);
+    }
+
 
     @GetMapping("/likedUser")
     @Transactional
@@ -66,5 +84,14 @@ public class NewsController {
             System.out.println(i);
         }
         return list;
+    }
+
+    @PostMapping("/filterNews")
+    public ResponseEntity<?> filterNews(@RequestParam("sport") String sport,
+                                        @RequestParam("politics") String politics,
+                                        @RequestParam("stars") String stars,
+                                        @RequestParam("art") String art,
+                                        @RequestParam("fashion") String fashion){
+        return newsService.filterNews(sport, politics, stars, art, fashion);
     }
 }

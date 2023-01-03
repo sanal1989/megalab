@@ -1,5 +1,6 @@
 package com.example.megalab.controller;
 
+import com.example.megalab.DTO.UserDTO;
 import com.example.megalab.entity.User;
 import com.example.megalab.service.UserService;
 import jakarta.transaction.Transactional;
@@ -44,15 +45,12 @@ public class UserController {
 
     @PutMapping("/updateUser")
     public ResponseEntity<?> updateUser(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
-                                   @RequestBody User user){
+                                   @RequestBody UserDTO userDTO){
+        User user = new User();
+        user.setFirstName(userDTO.getFirstName());
+        user.setLastName(userDTO.getLastName());
+        user.setLogin(userDTO.getLogin());
         return userService.updateUser(token, user);
-    }
-
-    @PutMapping("/test")
-    public ResponseEntity<?> testUser(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
-                                        @RequestBody User user){
-
-        return userService.testUser(token, user);
     }
 
 }

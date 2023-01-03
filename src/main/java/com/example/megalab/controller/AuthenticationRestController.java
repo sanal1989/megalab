@@ -1,8 +1,7 @@
 package com.example.megalab.controller;
 
 import com.example.megalab.entity.User;
-import com.example.megalab.repository.UserRepository;
-import com.example.megalab.security.AuthenticationRequestDTO;
+import com.example.megalab.DTO.AuthenticationRequestDTO;
 import com.example.megalab.security.JwtTokenProvider;
 import com.example.megalab.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;

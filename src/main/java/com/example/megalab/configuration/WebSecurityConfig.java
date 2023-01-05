@@ -36,8 +36,8 @@ public class WebSecurityConfig{
                 .authorizeHttpRequests(authorize -> {
                     try {
                         authorize
-                                .requestMatchers("/registration").permitAll()
-                                .requestMatchers("/api/auth/login").permitAll()
+                                .requestMatchers("/sp/registration","/swagger-ui/**","/v3/api-docs/**").permitAll()
+                                .requestMatchers("/sp/auth/login").permitAll()
                                 .anyRequest()
                                 .authenticated()
                                 .and()

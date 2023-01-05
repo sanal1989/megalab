@@ -86,7 +86,7 @@ public class UserService {
             user.setImage(file.getBytes());
             userRepository.save(user);
         } catch (IOException e) {
-            return new ResponseEntity("Image don't uploaded: ", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity("Image don't uploaded", HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity("Image uploaded successfully: ", HttpStatus.OK);
 

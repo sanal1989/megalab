@@ -1,5 +1,7 @@
 package com.example.megalab.service;
 
+import com.example.megalab.DTO.NewsDTO;
+import com.example.megalab.DTO.UserDTO;
 import com.example.megalab.entity.News;
 import com.example.megalab.entity.Rubric;
 import com.example.megalab.entity.User;
@@ -127,5 +129,34 @@ public class NewsService {
 
     public List<News> findNews(String header) {
         return newsRepository.findByHeaderContains(header);
+    }
+
+    public NewsDTO newsToNewsDTO(News news){
+        NewsDTO newsDTO = new NewsDTO();
+        newsDTO.setId(news.getId());
+        newsDTO.setHeader(news.getHeader());
+        newsDTO.setUser(news.getUser());
+        newsDTO.setRubric(news.getRubric());
+        newsDTO.setDescription(news.getDescription());
+        newsDTO.setContent(news.getContent());
+        newsDTO.setPicture(news.getPicture());
+        return  newsDTO;
+    }
+
+    public List<NewsDTO> listToListDTO(List<News> newsList) {
+        List<NewsDTO> newsDTOList = new ArrayList<>();
+        for (int i = 0; i < newsList.size(); i++) {
+            News news = newsList.get(i);
+            NewsDTO newsDTO = new NewsDTO();
+            newsDTO.setId(news.getId());
+            newsDTO.setHeader(news.getHeader());
+            newsDTO.setUser(news.getUser());
+            newsDTO.setRubric(news.getRubric());
+            newsDTO.setDescription(news.getDescription());
+            newsDTO.setContent(news.getContent());
+            newsDTO.setPicture(news.getPicture());
+            newsDTOList.add(newsDTO);
+        }
+        return newsDTOList;
     }
 }

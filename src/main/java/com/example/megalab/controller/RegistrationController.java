@@ -3,7 +3,6 @@ package com.example.megalab.controller;
 import com.example.megalab.DTO.UserDTO;
 import com.example.megalab.entity.User;
 import com.example.megalab.security.JwtTokenProvider;
-import com.example.megalab.service.CommentService;
 import com.example.megalab.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -11,7 +10,8 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import org.springframework.http.HttpHeaders;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,6 +21,7 @@ public class RegistrationController {
 
     private UserService userService;
     private JwtTokenProvider jwtTokenProvider;
+    Logger logger = LoggerFactory.getLogger(RegistrationController.class);
 
     public RegistrationController(UserService userService,
                                   JwtTokenProvider jwtTokenProvider) {
@@ -44,6 +45,7 @@ public class RegistrationController {
         user.setLogin(userDTO.getLogin());
         user.setPassword(userDTO.getPassword());
         ResponseEntity<?> entity = userService.saveUser(user);
+        logger.info("User registration:" + userDTO.getLogin());
         return entity;
     }
 }

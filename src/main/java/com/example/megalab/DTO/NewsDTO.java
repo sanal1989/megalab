@@ -20,6 +20,19 @@ public class NewsDTO {
 
     private byte[] picture;
 
+    public NewsDTO() {
+    }
+
+    public NewsDTO(Long id, UserDTO userDTO, Rubric rubric, String header, String content, String description, byte[] picture) {
+        this.id = id;
+        this.userDTO = userDTO;
+        this.rubric = rubric;
+        this.header = header;
+        this.content = content;
+        this.description = description;
+        this.picture = picture;
+    }
+
     public Long getId() {
         return id;
     }

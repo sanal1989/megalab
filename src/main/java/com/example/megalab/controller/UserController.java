@@ -6,10 +6,11 @@ import com.example.megalab.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -23,6 +24,7 @@ import org.springframework.web.servlet.view.RedirectView;
 public class UserController {
 
     private UserService userService;
+    Logger logger = LoggerFactory.getLogger(UserController.class);
 
     public UserController(UserService userService) {
         this.userService = userService;
@@ -36,13 +38,14 @@ public class UserController {
                     content = @Content),
             @ApiResponse(responseCode = "403", description = "Client doesn't have the token",
                     content = @Content),
-            @ApiResponse(responseCode = "401", description = "Client token has error",
+            @ApiResponse(responseCode = "401", description = "JWT token is expired or invalidate",
                     content = @Content)
     })
     @PostMapping("/imageUser")
     public ResponseEntity<?> uploadImage(@Parameter(description = "User's token") @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
                                          @Parameter(description = "Image you download to user") @RequestParam("image") MultipartFile file
     ) {
+        logger.info("add image to user");
         return userService.uploadImage(token,file);
     }
 
@@ -52,14 +55,14 @@ public class UserController {
                     content = { @Content }),
             @ApiResponse(responseCode = "403", description = "Client doesn't have the token",
                     content = @Content),
-            @ApiResponse(responseCode = "401", description = "Client token has error",
+            @ApiResponse(responseCode = "401", description = "JWT token is expired or invalidate",
                     content = @Content)
     })
     @GetMapping("/imageUser")
     @Transactional
     public ResponseEntity<?> getImageByUserId(@Parameter(description = "User's token") @RequestHeader(HttpHeaders.AUTHORIZATION) String token){
         byte[] image = userService.getImage(token);
-
+        logger.info("get user's image");
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.valueOf("image/png"))
                 .body(image);
@@ -71,11 +74,12 @@ public class UserController {
                     content = { @Content }),
             @ApiResponse(responseCode = "403", description = "Client doesn't have the token",
                     content = @Content),
-            @ApiResponse(responseCode = "401", description = "Client token has error",
+            @ApiResponse(responseCode = "401", description = "JWT token is expired or invalidate",
                     content = @Content)
     })
     @DeleteMapping("/imageUser")
     public ResponseEntity<?> deleteImageByUserId(@Parameter(description = "User's token") @RequestHeader(HttpHeaders.AUTHORIZATION) String token){
+        logger.info("delete image");
         return userService.deleteImageByUser(token);
     }
 
@@ -85,7 +89,7 @@ public class UserController {
                     content = { @Content }),
             @ApiResponse(responseCode = "403", description = "Client doesn't have the token",
                     content = @Content),
-            @ApiResponse(responseCode = "401", description = "Client token has error",
+            @ApiResponse(responseCode = "401", description = "JWT token is expired or invalidate",
                     content = @Content)
     })
     @PutMapping("/updateUser")
@@ -95,6 +99,7 @@ public class UserController {
         user.setFirstName(userDTO.getFirstName());
         user.setLastName(userDTO.getLastName());
         user.setLogin(userDTO.getLogin());
+        logger.info("update user");
         return userService.updateUser(token, user);
     }
 

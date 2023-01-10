@@ -1,6 +1,7 @@
 package com.example.megalab.service;
 
 import com.example.megalab.DTO.CommentDTO;
+import com.example.megalab.DTO.Message;
 import com.example.megalab.entity.Comment;
 import com.example.megalab.entity.News;
 import com.example.megalab.entity.User;
@@ -34,10 +35,11 @@ public class CommentService {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
-    public ResponseEntity<?> addComment(String token, long news, Comment comment) {
+    public ResponseEntity<?> addComment(String token, long news, Message message) {
         String login = jwtTokenProvider.getUserName(token);
         User user1 = userRepository.findByLogin(login).get();
         News news1;
+        Comment comment = new Comment();
         try{
             news1 = newsRepository.findById(news).get();
         }catch (NoSuchElementException e){
@@ -45,23 +47,26 @@ public class CommentService {
         }
         comment.setUser(user1);
         comment.setNews(news1);
+        comment.setComment(message.getComment());
         commentRepository.save(comment);
         return new ResponseEntity<>("comment save", HttpStatus.OK);
     }
 
     public ResponseEntity<?> addCommentForComment(String token,
                                                   long comment_id,
-                                                  Comment comment) {
+                                                  Message message) {
         String login = jwtTokenProvider.getUserName(token);
         User user1 = userRepository.findByLogin(login).get();
-        Comment comment1;
+        Comment commentFromDB;
+        Comment comment = new Comment();
         try {
-            comment1 = commentRepository.findById(comment_id).get();
+            commentFromDB = commentRepository.findById(comment_id).get();
         }catch (NoSuchElementException e){
             return new ResponseEntity<>("Comment doesn't exist", HttpStatus.BAD_REQUEST);
         }
         comment.setUser(user1);
-        List<Comment> list = comment1.getCommentForComment();
+        comment.setComment(message.getComment());
+        List<Comment> list = commentFromDB.getCommentForComment();
         list.add(comment);
         commentRepository.save(comment);
         return new ResponseEntity<>("comment save", HttpStatus.OK);

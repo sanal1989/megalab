@@ -2,6 +2,7 @@ package com.example.megalab.DTO;
 
 import com.example.megalab.entity.Comment;
 import com.example.megalab.entity.User;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
